@@ -18,11 +18,15 @@
 
 
 // Module Private Types Constants and Macros -----------------------------------
-#define VAC_GOOD    2500
-#define VBATT_FOR_LOW    2500
-#define VBATT_FOR_GOOD    3000
-#define VNTC_FOR_CUT    1000
-#define VNTC_FOR_CHARGE    1200
+// Measurements for Sense_IN
+// scale -> 18.3 / 4095
+// NTC 1k5 90deg 3k 70deg
+
+#define VAC_GOOD    1902    // 8.5V
+#define VBATT_FOR_LOW    2013    //9V
+#define VBATT_FOR_GOOD    2461    //11V
+#define VNTC_FOR_CUT    534    //0.43V on NTC 1k5@90deg
+#define VNTC_FOR_CHARGE    945    //0.761V on NTC 3k@70deg
 
 
 typedef enum {
@@ -32,6 +36,8 @@ typedef enum {
     AC_NOT_BATTERY_LOW    
     
 } battery_state_e;
+
+
 
 
 // Externals -------------------------------------------------------------------

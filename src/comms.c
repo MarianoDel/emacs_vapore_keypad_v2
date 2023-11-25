@@ -11,6 +11,7 @@
 #include "usart.h"
 #include "parameters.h"
 #include "gestion.h"
+#include "production.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -71,7 +72,12 @@ void CheckMessages (char * msg)
     {
         SetSMS();
         Usart1Send("sms activation!\n");
-    }    
+    }
+    else if (strncmp(msg, (const char *) "Starting Goto 115200",
+                     sizeof((const char *) "Starting Goto 115200") - 1) == 0)
+    {
+        Production_Set_Monitoring();
+    }
 }
 
 

@@ -141,6 +141,12 @@ int main(void)
 
 #ifdef PROGRAMA_DE_PRODUCCION    
 
+    // Adc and Dma Init
+    AdcConfig();
+    DMAConfig();
+    DMA1_Channel1->CCR |= DMA_CCR_EN;
+    ADC1->CR |= ADC_CR_ADSTART;
+
     SPI_Config();
     Usart1Config();
     RxCode();    // clean rxcode init
@@ -167,6 +173,12 @@ int main(void)
         FuncGestion();
     }
     
+    // Adc and Dma Init
+    AdcConfig();
+    DMAConfig();
+    DMA1_Channel1->CCR |= DMA_CCR_EN;
+    ADC1->CR |= ADC_CR_ADSTART;
+
     SPI_Config();
     Usart1Config();
     RxCode();    // clean rxcode init

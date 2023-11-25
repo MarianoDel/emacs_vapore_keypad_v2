@@ -132,6 +132,8 @@ volatile unsigned char errorcode = 0;
 
 // Private Module Functions ----------------------------------------------------
 unsigned char FuncAlarm (unsigned char sms_alarm);
+unsigned char Production_Check_Monitoring (void);
+
 
 
 // Module Functions ------------------------------------------------------------
@@ -813,14 +815,28 @@ void Production_Function (void)
         }
 
         UpdateBuzzer();
+
         Display_UpdateSM();
+
         UpdateSiren();
+
         UpdateAudio();
 
         Battery_Update ();
 
-        //TODO: change this to enter on gestion module from comms, do not change the main_state from comms!!!
-        main_state = UpdateUart(main_state);
+        CommsUpdate ();
+
+        // check if monitoring is needed, leave only on board reset
+        if (Production_Check_Monitoring ())
+        {
+            Usart1Send("going to 115200\r\n");
+            
+            Wait_ms(100);
+            
+            Usart1ChangeBaud(USART_115200);    
+            
+            FuncGestion();
+        }
     }
 }
 
@@ -1299,6 +1315,19 @@ unsigned char FuncAlarm (unsigned char sms_alarm)
 #endif
 
     return WORKING;
+}
+
+
+unsigned char on_monitoring = 0;
+unsigned char Production_Check_Monitoring (void)
+{
+    return on_monitoring;
+}
+
+
+void Production_Set_Monitoring (void)
+{
+    on_monitoring = 1;
 }
 
 

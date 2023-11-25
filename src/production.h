@@ -24,6 +24,8 @@
 // Module Exported Functions ---------------------------------------------------
 void Production_Function (void);
 void Production_Timeouts (void);
+void Production_Set_Monitoring (void);
+
 
 
 #endif    /* _PRODUCTION_H_ */
