@@ -98,7 +98,9 @@ int main(void)
 // #endif
     BUZZER_OFF;
     LED_OFF;
-    
+
+    TIM1_Init();
+    Power_Ampli_Disa();    
         
     /////////////////////////
     // Mains Programs Init //
@@ -152,9 +154,6 @@ int main(void)
     RxCode();    // clean rxcode init
     TIM3_Init();
 
-    TIM1_Init();
-    Power_Ampli_Disa();
-
     Production_Function();
     
 #endif
@@ -183,9 +182,6 @@ int main(void)
     Usart1Config();
     RxCode();    // clean rxcode init
     TIM3_Init();
-
-    TIM1_Init();
-    Power_Ampli_Disa();
 
     Production_Function();
     

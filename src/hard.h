@@ -29,8 +29,6 @@
 // #define USE_F12_PLUS_WITH_SM
 #define USE_F12_PLUS_ON_BUTTON1
 #define CODES_IN_SST
-#define W25_MEMORY
-// #define SST25_MEMORY
 
 #ifdef USE_F12_PLUS_WITH_SM
 #define USE_F12_PLUS_SM_DIRECT
@@ -40,11 +38,15 @@
 //---- Kinf of Program Configuration ----------
 #define PROGRAMA_DE_PRODUCCION_Y_GESTION
 // #define PROGRAMA_DE_PRODUCCION
-// #define PROGRAMA_DE_BUCLE
 // #define PROGRAMA_FACTORY_TEST
 // #define PROGRAMA_DE_GESTION
 // #define PROGRAMA_PORTON_KIRNO
-// #define PROGRAMA_CHICKEN_BUCLE    //boton 1, 2, 3, el 4 apaga
+
+
+//---- Subprogram config - Mostly on Production
+// #define PRODUCCION_NORMAL
+#define PRODUCCION_BUCLE
+// #define PRODUCCION_CHICKEN_BUCLE    //boton 1, 2, 3, el 4 apaga
 
 #ifdef PROGRAMA_PORTON_KIRNO
 #define WITH_WELCOME_CODE_ON_DISPLAY
@@ -54,7 +56,11 @@
 
 #if defined (PROGRAMA_DE_PRODUCCION) ||\
     defined (PROGRAMA_DE_PRODUCCION_Y_GESTION)
-#define PROGRAMA_NORMAL
+#if (!defined PRODUCCION_NORMAL) &&\
+    (!defined PRODUCCION_BUCLE) &&\
+    (!defined PRODUCCION_CHICKEN_BUCLE)
+#error "Select what kind of production program do you want"
+#endif
 #endif
 
 //---- Configuration for Hardware and Software Versions -------
@@ -91,11 +97,14 @@
 #endif
 
 //--- Type of Program Announcement ----------------
-#ifdef PROGRAMA_NORMAL
-#define KIND_OF_PROGRAM "Panel Normal\r\n"
+#ifdef PRODUCCION_NORMAL
+#define KIND_OF_PROGRAM "Produccion - Panel Normal\r\n"
 #endif
-#ifdef PROGRAMA_DE_BUCLE
-#define KIND_OF_PROGRAM "Panel con Programa para Bucle\r\n"
+#ifdef PRODUCCION_BUCLE
+#define KIND_OF_PROGRAM "Produccion - Programa para Bucle\r\n"
+#endif
+#ifdef PRODUCCION_CHICKEN_BUCLE
+#define KIND_OF_PROGRAM "Produccion - Bucle Chicken Features\r\n"
 #endif
 #ifdef PROGRAMA_FACTORY_TEST
 #define KIND_OF_PROGRAM "Panel con Programa de testeo en fabrica\r\n"
@@ -105,9 +114,6 @@
 #endif
 #ifdef PROGRAMA_PORTON_KIRNO
 #define KIND_OF_PROGRAM "Programa del Porton de Kirno\r\n"
-#endif
-#ifdef PROGRAMA_CHICKEN_BUCLE
-#define KIND_OF_PROGRAM "Programa para Bucle Chicken Features\r\n"
 #endif
 
 //---- End of Kind of Program Config ----------

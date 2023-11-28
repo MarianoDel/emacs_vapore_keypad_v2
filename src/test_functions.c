@@ -423,7 +423,9 @@ void TF_Usart1_And_Memory_RW (void)
 }
 
 
-extern void writeSPI2(unsigned char data);
+extern void writeSPI2 (unsigned char data);
+extern void writeStatus2NVM (unsigned char data);
+extern void unprotectNVM (void);
 void TF_Usart1_And_Memory_Debug (void)
 {
     unsigned char buffer [3];
@@ -444,6 +446,7 @@ void TF_Usart1_And_Memory_Debug (void)
             buffer[1],
             buffer[2]);
 
+    // read first jedec to initialize memory
     Usart1Send(my_str);
     Wait_ms(200);
     unsigned char send_menu = 1;

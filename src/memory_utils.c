@@ -106,22 +106,13 @@ void Load16SamplesShort (unsigned short * buf, unsigned int posi)
 
 void SaveFilesIndex (void)
 {
-	unsigned short * p_memory;
+    unsigned char * p_memory;
 
+    p_memory = (unsigned char *) &files.posi0;
 
-	//clearNVM();	//para pruebas
-	//ojo la memoria debe estar borrada de antes
-	p_memory = (unsigned short *) &files.posi0;
-	//writeBufNVM(p_memory, sizeof(filesystem_typedef), 0);
-#if defined W25_MEMORY
-        writeBufferNVM ((unsigned char *) p_memory,
-                        sizeof(filesystem_typedef),
-                        OFFSET_FILESYSTEM);
-#elif defined SST25_MEMORY
-        writeBufNVM16u(p_memory, sizeof(filesystem_typedef) >> 1, OFFSET_FILESYSTEM);
-#else
-#error "Select W25_MEMORY or SST25_MEMORY on hard.h"
-#endif
+    writeBufferNVM (p_memory,
+                    sizeof(filesystem_typedef),
+                    OFFSET_FILESYSTEM);
 
 }
 
