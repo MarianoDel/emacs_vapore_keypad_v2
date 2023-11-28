@@ -113,7 +113,16 @@ void SaveFilesIndex (void)
 	//ojo la memoria debe estar borrada de antes
 	p_memory = (unsigned short *) &files.posi0;
 	//writeBufNVM(p_memory, sizeof(filesystem_typedef), 0);
-	writeBufNVM16u(p_memory, sizeof(filesystem_typedef) >> 1, OFFSET_FILESYSTEM);
+#if defined W25_MEMORY
+        writeBufferNVM ((unsigned char *) p_memory,
+                        sizeof(filesystem_typedef),
+                        OFFSET_FILESYSTEM);
+#elif defined SST25_MEMORY
+        writeBufNVM16u(p_memory, sizeof(filesystem_typedef) >> 1, OFFSET_FILESYSTEM);
+#else
+#error "Select W25_MEMORY or SST25_MEMORY on hard.h"
+#endif
+
 }
 
 

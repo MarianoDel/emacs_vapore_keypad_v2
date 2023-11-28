@@ -29,6 +29,8 @@
 // #define USE_F12_PLUS_WITH_SM
 #define USE_F12_PLUS_ON_BUTTON1
 #define CODES_IN_SST
+#define W25_MEMORY
+// #define SST25_MEMORY
 
 #ifdef USE_F12_PLUS_WITH_SM
 #define USE_F12_PLUS_SM_DIRECT

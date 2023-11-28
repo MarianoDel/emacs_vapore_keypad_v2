@@ -25,6 +25,7 @@
 #include "rws317.h"
 #include "comms.h"
 #include "battery_and_charger.h"
+#include "gestion.h"
 
 #include <stdio.h>
 #include <string.h>

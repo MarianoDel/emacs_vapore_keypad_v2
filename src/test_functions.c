@@ -52,8 +52,10 @@ void TF_RIGHT_LEFT (void);
 void TF_TIM1_HBridge (void);
 void TF_Usart1_And_Memory_Only_Jedec (void);
 void TF_Usart1_And_Memory_RW (void);
+void TF_Usart1_And_Memory_Debug (void);
 void TF_TIM1_HBridge_Siren (void);
 void TF_TIM1_HBridge_Audio (void);
+
 
 
 // Module Functions ------------------------------------------------------------
@@ -71,8 +73,9 @@ void TF_Hardware_Tests (void)
     // TF_TIM1_HBridge ();
     // TF_Usart1_And_Memory_Only_Jedec ();
     // TF_Usart1_And_Memory_RW ();
+    TF_Usart1_And_Memory_Debug ();
     // TF_TIM1_HBridge_Siren ();
-    TF_TIM1_HBridge_Audio ();
+    // TF_TIM1_HBridge_Audio ();
     
 }
 
@@ -263,35 +266,6 @@ void TF_Usart1_TxRx (void)
     }
 }
 
-// void TF_Usart1_Tx_Single (void)
-// {
-//     USART1Config();
-
-//     while (1)
-//     {
-//         if (!timer_standby)
-//         {
-//             timer_standby = 100;
-//             USART1->TDR = 'M';
-//         }
-//     }
-// }
-
-
-// void TF_Usart1_Tx_Int (void)
-// {
-//     USART1Config();
-    
-//     while (1)
-//     {
-//         if (!timer_standby)
-//         {
-//             timer_standby = 100;
-//             USART1->CR1 |= USART_CR1_TXEIE;
-//         }
-//     }
-// }
-
 
 void TF_Voltage_Temperature (void)
 {
@@ -408,7 +382,7 @@ void TF_Usart1_And_Memory_RW (void)
 
     // SPI Init
     CE_OFF;
-    WP_OFF;    
+    WP_OFF;
     SPI_Config();
     
     // Usart Init
@@ -428,24 +402,145 @@ void TF_Usart1_And_Memory_RW (void)
         
         Wait_ms (1000);
 
-        for (int j = 0; j < 100; j++)
+        for (int i = 888; i < 1000; i++)
         {
-            for (int i = 0; i < 1000; i++)
-            {
-                sprintf(my_str, "position %d saving: %d", j, i);
-                Usart1Send(my_str);
-                if (SST_WriteCodeToMemory(j, i) != 0)
-                    Usart1Send(" ok");
-                else
-                    Usart1Send(" err");
+            sprintf(my_str, "position %d saving: %d", i, 0x50);
+            Usart1Send(my_str);
+            if (SST_WriteCodeToMemory(i, 0x50) != 0)
+                Usart1Send(" ok");
+            else
+                Usart1Send(" err");
             
-                Wait_ms(100);
+            Wait_ms(100);
 
-                int get = SST_CheckIndexInMemory(j);
-                sprintf(my_str, " getting: %d\n", get);
+            int get = SST_CheckIndexInMemory(i);
+            sprintf(my_str, " getting: %d\n", get);
+            Usart1Send(my_str);
+
+            Wait_ms(1000);
+        }
+    }
+}
+
+
+extern void writeSPI2(unsigned char data);
+void TF_Usart1_And_Memory_Debug (void)
+{
+    unsigned char buffer [3];
+    char my_str [100];
+
+    // SPI Init
+    CE_OFF;
+    WP_OFF;
+    SPI_Config();
+    
+    // Usart Init
+    Usart1Config();
+    Wait_ms(20);
+    Usart1Send("\n\nmemory jedec: ");
+    getJEDEC (buffer);
+    sprintf(my_str, "0x%02x 0x%02x 0x%02x\n",
+            buffer[0],
+            buffer[1],
+            buffer[2]);
+
+    Usart1Send(my_str);
+    Wait_ms(200);
+    unsigned char send_menu = 1;
+    unsigned char data = 0;
+    unsigned char data1 = 0; 
+    unsigned char data2 = 0;
+    unsigned int pos_to_test = 0x3200;
+    
+    while (1)
+    {
+        if (send_menu)
+        {
+            Usart1Send("  read status register 1to3 RDSR: 1\n");
+            Usart1Send("  enable write: 2\n");
+            Usart1Send("  clear all mem: 3\n");
+            Wait_ms(100);
+            sprintf(my_str, "  blank 4k from 0x%04x: 4\n", pos_to_test);
+            Usart1Send(my_str);
+            sprintf(my_str, "  read position 0x%04x: 5\n", pos_to_test);
+            Usart1Send(my_str);
+            sprintf(my_str, "  write position 0x%04x: 6\n", pos_to_test);            
+            Usart1Send(my_str);
+            Wait_ms(100);
+            Usart1Send("  write SR2: 7\n");
+            Usart1Send("  unprotect: 8\n");
+            Usart1Send("\n   selection: ");
+            send_menu = 0;
+        }
+
+        if (Usart1HaveData())
+        {
+            Usart1HaveDataReset();
+            Usart1ReadBuffer((unsigned char *) my_str, sizeof(my_str));
+
+            switch (my_str[0])
+            {
+            case '1':
+                data = readStatusNVM();
+                data1 = readStatus2NVM();
+                data2 = readStatus3NVM();
+                sprintf(my_str, "status 0x%02x 0x%02x 0x%02x\n", data, data1, data2);
                 Usart1Send(my_str);
+                Wait_ms(500);                
+                break;
 
-                Wait_ms(1000);
+            case '2':
+                NVM_On;
+                writeSPI2(SST25_WREN);
+                NVM_Off;
+                Wait_ms(500);                
+                break;
+
+            case '3':
+                clearNVM();
+                Usart1Send("done!\n");
+                Wait_ms(500);                
+                break;
+
+            case '4':
+                Clear4KNVM(pos_to_test);
+                Usart1Send("done!\n");
+                Wait_ms(500);                
+                break;
+                
+            case '5':
+                readBufNVM8u(&data, 1, pos_to_test);
+                sprintf(my_str, "0x%02x\n", data);
+                Usart1Send(my_str);
+                Wait_ms(500);
+                break;
+
+            case '6':
+                writeNVM(0x55, pos_to_test);
+                sprintf(my_str, "saving 0x55 on 0x%04x\n", pos_to_test);
+                Usart1Send(my_str);
+                Wait_ms(500);                
+                break;
+
+            case '7':
+                writeStatus2NVM(0x00);
+                Usart1Send("sr2 to 0x00\n");
+                Wait_ms(500);                
+                break;
+
+            case '8':
+                unprotectNVM();
+                Usart1Send("memory unprotected\n");
+                Wait_ms(500);                
+                break;
+                
+            case '?':
+                send_menu = 1;
+                break;
+
+            default:
+                Usart1Send("Selection error! try ?\n");
+                break;
             }
         }
     }
@@ -542,7 +637,6 @@ void TF_TIM1_HBridge_Audio (void)
         
     }
 }
-
 
 
 //--- end of file ---//
