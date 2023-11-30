@@ -25,8 +25,8 @@
 #define VAC_GOOD    1902    // 8.5V
 #define VBATT_FOR_LOW    2013    //9V
 #define VBATT_FOR_GOOD    2461    //11V
-#define VNTC_FOR_CUT    534    //0.43V on NTC 1k5@90deg
-#define VNTC_FOR_CHARGE    945    //0.761V on NTC 3k@70deg
+#define VNTC_FOR_CUT    943    //0.76V on NTC 90C fast charge (0.52V on low charge -> < 0.6A)
+#define VNTC_FOR_CHARGE    1241    //1V on NTC 45C fast charge (0.910 on low charge -> < 0.6A)
 
 
 typedef enum {
