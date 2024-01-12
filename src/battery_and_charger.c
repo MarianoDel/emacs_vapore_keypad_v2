@@ -131,11 +131,13 @@ void Battery_Update (void)
     if (!battery_led_timer)
     {
         battery_led_timer = battery_led_period;
-
+        
+#ifdef LED_FOR_BATTERY_STATUS
         if (Led_Is_On())
             Led_Off();
         else
             Led_On();
+#endif
 
     }
 

@@ -382,6 +382,9 @@ void UpdateAudio (void)
         Power_Ampli_Ena ();
         Ampli_to_Audio ();
         Usart1Send((char *) "-> To Audio\r\n");
+#ifdef LED_FOR_AUDIO_TEST_START_FINISH
+        Led_On();
+#endif
         audio_state++;
         break;
 
@@ -397,11 +400,17 @@ void UpdateAudio (void)
                 //cargo el buffer que no esta en uso
                 if (buff_in_use == 1)
                 {
+#ifdef LED_FOR_AUDIO_TEST_EACH_BUFF
+                    Led_On();
+#endif
                     //cargo el buffer 2
                     Load16SamplesShort((unsigned short *)v_samples2, *p_files_addr + FILE_OFFSET + current_size);
                 }
                 else if (buff_in_use == 2)
                 {
+#ifdef LED_FOR_AUDIO_TEST_EACH_BUFF
+                    Led_Off();
+#endif
                     //cargo el buffer 1
                     Load16SamplesShort((unsigned short *)v_samples1, *p_files_addr + FILE_OFFSET + current_size);
                 }
@@ -410,6 +419,9 @@ void UpdateAudio (void)
             }
             else
             {
+#ifdef LED_FOR_AUDIO_TEST_START_FINISH
+                Led_Off();
+#endif
                 //termine de enviar avanzo para ver si hay mas numeros
                 audio_state++;
             }
