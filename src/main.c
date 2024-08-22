@@ -36,6 +36,7 @@
 #include "production.h"
 #include "keypad.h"
 #include "rws317.h"
+#include "display_7seg.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -170,6 +171,17 @@ int main(void)
         Usart1ChangeBaud(USART_115200);    
     
         FuncGestion();
+    }
+
+    if (KEY_2)
+    {
+        Display_VectorToStr(HARD_TO_DISPLAY);
+        while (!Display_IsFree())
+            Display_UpdateSM();
+
+        Display_VectorToStr(SOFT_TO_DISPLAY);
+        while (!Display_IsFree())
+            Display_UpdateSM();    
     }
     
     // Adc and Dma Init

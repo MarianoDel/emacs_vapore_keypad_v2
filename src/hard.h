@@ -25,6 +25,7 @@
 // VER RWS317.H LO QUE TIENE QUE VER CON CODIGOS Y CONTROLES
 #define CON_BLOQUEO_DE_KEYPAD
 // #define WITH_WELCOME_CODE_ON_DISPLAY
+#define USE_BUTTON4_ONLY_5MINS
 
 // #define USE_F12_PLUS_WITH_SM
 #define USE_F12_PLUS_ON_BUTTON1
@@ -94,11 +95,13 @@
 //--- Hardware Welcome Code ------------------//
 #ifdef HARDWARE_VERSION_2_0
 #define HARD "Hardware V: 2.0\r\n"
+#define HARD_TO_DISPLAY "h2.0"
 #endif
 
 //--- Software Welcome Code ------------------//
 #ifdef SOFTWARE_VERSION_2_5
 #define SOFT "Software V: 2.5\r\n"
+#define SOFT_TO_DISPLAY "s2.5"
 #endif
 
 //--- Type of Program Announcement ----------------

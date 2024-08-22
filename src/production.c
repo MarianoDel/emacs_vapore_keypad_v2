@@ -124,6 +124,11 @@ unsigned short last_two = 0;
 unsigned char alarm_state = 0;
 unsigned char repetition_counter = 0;
 
+#ifdef USE_BUTTON4_ONLY_5MINS
+#define	BUTTON4_5MINS_TT    (1000 * 60 * 5)
+volatile unsigned int button4_only5mins_timeout = 0;
+#endif
+
 //--- Respecto del KeyPad
 // unsigned char remote_keypad_state = 0;
 unsigned char unlock_by_remote = 0;
@@ -880,7 +885,9 @@ unsigned char FuncAlarm (unsigned char sms_alarm)
             //modificacion 24-01-2019 F12PLUS espera 10 segundos y se activa 5 segundos
             F12_State_Machine_Start();
 #endif
-            
+#ifdef USE_BUTTON4_ONLY_5MINS
+	    button4_only5mins_timeout = BUTTON4_5MINS_TT;
+#endif                        
         }
         else
         {
@@ -903,7 +910,9 @@ unsigned char FuncAlarm (unsigned char sms_alarm)
                     //modificacion 24-01-2019 F12PLUS espera 10 segundos y se activa 5 segundos
                     F12_State_Machine_Start();
 #endif
-
+#ifdef USE_BUTTON4_ONLY_5MINS
+		    button4_only5mins_timeout = BUTTON4_5MINS_TT;
+#endif
                 }
                 else if (button == 2)
                 {
@@ -918,6 +927,9 @@ unsigned char FuncAlarm (unsigned char sms_alarm)
                     alarm_state = ALARM_BUTTON3;
                     strcat(str, (char *) "B3\r\n");
                     repetition_counter = param_struct.b3r;
+#ifdef USE_BUTTON4_ONLY_5MINS
+		    button4_only5mins_timeout = BUTTON4_5MINS_TT;
+#endif
                 }
                 else if (button == 4)
                 {
@@ -1296,9 +1308,18 @@ unsigned char FuncAlarm (unsigned char sms_alarm)
         break;
 
     case ALARM_BUTTON4:
+#ifdef BUTTON4_5MINS_TT
+	SirenCommands(SIREN_STOP_CMD);
+
+	if (button4_only5mins_timeout)
+	    PositionToSpeak(last_one_or_three);
+	
+	alarm_state++;
+#else
         SirenCommands(SIREN_STOP_CMD);
-        PositionToSpeak(last_one_or_three);
-        alarm_state++;
+	PositionToSpeak(last_one_or_three);
+	alarm_state++;
+#endif
         break;
 
     case ALARM_BUTTON4_A:
@@ -1668,13 +1689,11 @@ void Production_Timeouts (void)
 
     Battery_Timeouts ();
     
-    // if (f12_plus_timer)
-    //     f12_plus_timer--;
-    
-// #ifdef CON_MODIFICACION_DIODO_BATERIA
-//     if (timer_battery)
-//         timer_battery--;
-// #endif
+#ifdef BUTTON4_5MINS_TT
+    if (button4_only5mins_timeout)
+	button4_only5mins_timeout--;
+#endif
+
     //cuenta 1 segundo
     if (button_timer_internal)
         button_timer_internal--;
