@@ -103,11 +103,12 @@ extern mem_bkp_typedef memory_backup;
 extern filesystem_typedef files;
 extern parameters_typedef param_struct;
 
+extern volatile unsigned short interdigit_timeout;    // from keypad.c
 
 // Globals ---------------------------------------------------------------------
 volatile unsigned short timer_keypad_enabled = 0;
 volatile unsigned short wait_for_code_timeout;
-volatile unsigned short interdigit_timeout;
+
 
 // volatile unsigned short siren_timeout;
 
@@ -211,7 +212,7 @@ void Production_Function (void)
     //si esta todo bien configurado prendo el led
     LED_ON;
 
-    char str [40];    
+    char str [42];    
     main_state_e main_state = 0;
     unsigned char switches, switches_posi0, switches_posi1, switches_posi2;
     unsigned short position, mass_erase_position;

@@ -57,6 +57,7 @@
 
 // Externals -------------------------------------------------------------------
 extern filesystem_typedef files;
+extern volatile unsigned short siren_timeout;    // from main.c
 
 
 // Global ----------------------------------------------------------------------
@@ -64,7 +65,6 @@ unsigned char siren_state = 0;
 unsigned short freq_us = 0;
 unsigned char siren_steps = 0;
 
-volatile unsigned short siren_timeout;
 
 //--- Audio Global Variables
 #define FILE_OFFSET 44

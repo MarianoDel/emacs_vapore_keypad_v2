@@ -232,10 +232,10 @@ void SysTickError (void)
     //Capture systick error...
     while (1)
     {
-        if (CTRL_FAN)
-            CTRL_FAN_OFF;
+        if (LED)
+            LED_OFF;
         else
-            CTRL_FAN_ON;
+            LED_ON;
 
         for (unsigned char i = 0; i < 255; i++)
         {
